@@ -50,7 +50,7 @@ def main(argv):
         elif opt in ("-f", "--flow"):
             flowhash: str = arg
         elif opt in ("-l", "--length"):
-            length: int = arg
+            length: int = int(arg)
 
     # 沒有流程, 則產生隨機ID, 並且不保存對話流程
     save_flow = True
@@ -79,8 +79,9 @@ def main(argv):
     message_log.append({"role": "user", "content": inputmsg})
 
     # 取得請求結果
+    response = ""
     try:
-        response = generate_response(message_log, flowhash, length)
+        response = generate_response(message_log, length)
     # 發生錯誤直接跳離程序
     except Exception:
         sys.exit(1)
