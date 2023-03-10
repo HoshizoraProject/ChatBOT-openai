@@ -3,14 +3,13 @@ import configparser, uuid
 import openai
 
 # 定義 OpenAI GPT 請求
-def generate_response(messages, user, length):
+def generate_response(messages, length):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages,
         max_tokens=length,
         stop=None,
-        temperature=0.7,
-        user=user # 區別使用者
+        temperature=0.7
     )
 
     for choice in response.choices:
@@ -33,30 +32,30 @@ def main(argv):
 
     # 嘗試取得輸入參數
     try:
-        opts, args = getopt.getopt(argv,"hmu:l:",["message=","user=","length="])
+        opts, args = getopt.getopt(argv,"hmf:l:",["message=","flow=","length="])
     except getopt.GetoptError:
-        print('chatbot.py -m <message> -u <user> -l <length>')
+        print('chatbot.py -m <message> -f <flow> -l <length>')
         sys.exit(2)
 
     # 定義預設值
-    userhash = None # 預設使用者
+    flowhash = None # 預設流程ID
     length = 200 # 預設回應長度
 
     for opt, arg in opts:
         if opt == '-h':
-            print('chatbot.py -m <message> -u <user> -l <length>')
+            print('chatbot.py -m <message> -f <flow> -l <length>')
             sys.exit(0)
         elif opt in ("-m", "--message"):
             inputmsg: str = arg
-        elif opt in ("-u", "--user"):
-            userhash: str = arg
+        elif opt in ("-f", "--flow"):
+            flowhash: str = arg
         elif opt in ("-l", "--length"):
             length: int = arg
 
     # 沒有使用者, 則產生隨機ID, 並且不保存對話流程
     save_flow = True
-    if userhash == None:
-        userhash = str(uuid.uuid4())
+    if flowhash == None:
+        flowhash = str(uuid.uuid4())
         save_flow = False
 
     # 設定 OpenAI KEY
@@ -66,8 +65,8 @@ def main(argv):
     # 判斷是否需要保存對話流程
     if save_flow:
         # 判斷是否存在之前的對話流程
-        if os.path.isfile(f'{filefolder}/{userhash}.json'):
-            with open(f'{filefolder}/{userhash}.json', 'w') as f:
+        if os.path.isfile(f'{filefolder}/{flowhash}.json'):
+            with open(f'{filefolder}/{flowhash}.json', 'w') as f:
                 message_log = json.load(f)
         else:
             # 建立新的對話流程
@@ -81,7 +80,7 @@ def main(argv):
 
     # 取得請求結果
     try:
-        response = generate_response(message_log, userhash, length)
+        response = generate_response(message_log, flowhash, length)
     # 發生錯誤直接跳離程序
     except Exception:
         sys.exit(1)
@@ -92,7 +91,7 @@ def main(argv):
     # 判斷是否需要保存對話流程
     if save_flow:
         # 將對話結果存入
-        with open(f'{filefolder}/{userhash}.json', 'w') as f:
+        with open(f'{filefolder}/{flowhash}.json', 'w') as f:
             print(json.dump(message_log), file=f, end='')
 
     # CLI 輸出對話結果
