@@ -70,10 +70,10 @@ def main(argv):
                 message_log = json.load(f)
         else:
             # 建立新的對話流程
-            message_log = [{"role": "system", "content": "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible."}]
+            message_log = [{"role": "system", "content": "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible. Traditional Chinese is preferred for answers."}]
     else:
         # 建立新的對話流程
-        message_log = [{"role": "system", "content": "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible."}]
+        message_log = [{"role": "system", "content": "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible. Traditional Chinese is preferred for answers."}]
 
     # 定義文字輸入數據
     message_log.append({"role": "user", "content": inputmsg})
