@@ -38,7 +38,7 @@ def main(argv):
         sys.exit(2)
 
     # 定義預設值
-    flowhash = None # 預設流程ID
+    flowuuid = None # 預設流程ID
     length = 200 # 預設回應長度
 
     for opt, arg in opts:
@@ -48,14 +48,14 @@ def main(argv):
         elif opt in ("-m", "--message"):
             inputmsg: str = arg
         elif opt in ("-f", "--flow"):
-            flowhash: str = arg
+            flowuuid: str = arg
         elif opt in ("-l", "--length"):
             length: int = int(arg)
 
     # 沒有流程, 則產生隨機ID, 並且不保存對話流程
     save_flow = True
-    if flowhash == None:
-        flowhash = str(uuid.uuid4())
+    if flowuuid == None:
+        flowuuid = str(uuid.uuid4())
         save_flow = False
 
     # 設定 OpenAI KEY
@@ -65,8 +65,8 @@ def main(argv):
     # 判斷是否需要保存對話流程
     if save_flow:
         # 判斷是否存在之前的對話流程
-        if os.path.isfile(f'{filefolder}/{flowhash}.json'):
-            with open(f'{filefolder}/{flowhash}.json', 'w') as f:
+        if os.path.isfile(f'{filefolder}/{flowuuid}.json'):
+            with open(f'{filefolder}/{flowuuid}.json', 'w') as f:
                 message_log = json.load(f)
         else:
             # 建立新的對話流程
@@ -92,8 +92,8 @@ def main(argv):
     # 判斷是否需要保存對話流程
     if save_flow:
         # 將對話結果存入
-        with open(f'{filefolder}/{flowhash}.json', 'w') as f:
-            print(json.dump(message_log), file=f, end='')
+        with open(f'{filefolder}/{flowuuid}.json', 'w') as f:
+            json.dump(message_log, f)
 
     # CLI 輸出對話結果
     print(response, end='')
