@@ -96,7 +96,7 @@ def main(argv):
             print(json.dump(message_log), file=f, end='')
 
     # CLI 輸出對話結果
-    print(response)
+    print(response, end='')
 
 if __name__ == "__main__":
    main(sys.argv[1:])
