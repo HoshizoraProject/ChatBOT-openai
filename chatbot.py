@@ -2,7 +2,6 @@ import os, sys, getopt, json
 import configparser, uuid
 import openai
 
-
 # 定義 OpenAI GPT 請求
 def generate_response(messages, user, length):
     response = openai.ChatCompletion.create(
