@@ -11,7 +11,7 @@ def generate_response(messages, user, length):
         max_tokens=length,
         stop=None,
         temperature=0.7,
-        user=user  # 區別使用者
+        user=user # 區別使用者
     )
 
     for choice in response.choices:
@@ -24,8 +24,7 @@ def main(argv):
     cf = configparser.ConfigParser()
     cf.read("settings.config")
 
-    # 嘗試建立相關目錄
-    # 儲存的目錄(預設在 importData)
+    # 嘗試建立相關儲存的目錄(預設在 chatbot_flow)
     filefolder = 'chatbot_flow'
     try:
         os.makedirs(filefolder)
