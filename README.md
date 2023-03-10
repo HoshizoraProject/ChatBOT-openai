@@ -1,5 +1,24 @@
 # ChatBOT
-透過 OpenGPT 進行類自然語言對話
+透過 OpenGPT 進行類自然語言對話, 使用模型 `gpt-3.5-turbo`
+
+## Python 使用上的基礎範例
+```
+import subprocess
+
+# 定義輸入內容
+input = "要詢問AI的文字"
+
+# 執行子程序
+proc = subprocess.run(['python3', 'chatbot.py', f'--message={input}'],
+                          stdout=subprocess.PIPE)
+if (proc.returncode != 0):
+    print("執行 chatbot.py 發生異常!")
+    return
+
+response = proc.stdout.decode("utf-8")
+
+print(response)
+```
 
 ## Reference
 [OpenAI API GPT-3.5](https://platform.openai.com/docs/guides/chat)
