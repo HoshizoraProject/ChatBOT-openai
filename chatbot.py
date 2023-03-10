@@ -80,7 +80,11 @@ def main(argv):
     message_log.append({"role": "user", "content": inputmsg})
 
     # 取得請求結果
-    response = generate_response(message_log, userhash, length)
+    try:
+        response = generate_response(message_log, userhash, length)
+    # 發生錯誤直接跳離程序
+    except Exception:
+        sys.exit(1)
 
     # 定義回應結果數據
     message_log.append({"role": "assistant", "content": response})
