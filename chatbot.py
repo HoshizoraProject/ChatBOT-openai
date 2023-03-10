@@ -2,6 +2,7 @@ import os, sys, getopt, json
 import configparser, uuid
 import openai
 
+
 # 定義 OpenAI GPT 請求
 def generate_response(messages, user, length):
     response = openai.ChatCompletion.create(
@@ -22,6 +23,15 @@ def main(argv):
     # 從設定檔讀取資料
     cf = configparser.ConfigParser()
     cf.read("settings.config")
+
+    # 嘗試建立相關目錄
+    # 儲存的目錄(預設在 importData)
+    filefolder = 'chatbot_flow'
+    try:
+        os.makedirs(filefolder)
+    # 檔案已存在的例外處理
+    except FileExistsError:
+        pass
 
     # 嘗試取得輸入參數
     try:
@@ -45,16 +55,28 @@ def main(argv):
         elif opt in ("-l", "--length"):
             length: int = arg
 
-    # 沒有使用者, 則產生隨機
+    # 沒有使用者, 則產生隨機ID, 並且不保存對話流程
+    save_flow = True
     if userhash == None:
         userhash = str(uuid.uuid4())
+        save_flow = False
 
     # 設定 OpenAI KEY
     openai.api_key = cf.get("openai", "OPENAI_API_KEY")
     openai.organization = cf.get("openai", "OPENAI_ORGANIZATION_ID")
 
-    # 嘗試取得原先對話數據
-    message_log = []
+    # 判斷是否需要保存對話流程
+    if save_flow:
+        # 判斷是否存在之前的對話流程
+        if os.path.isfile(f'{filefolder}/{userhash}.json'):
+            with open(f'{filefolder}/{userhash}.json', 'w') as f:
+                message_log = json.load(f)
+        else:
+            # 建立新的對話流程
+            message_log = []
+    else:
+        # 建立新的對話流程
+        message_log = []
 
     # 定義文字輸入數據
     message_log.append({"role": "user", "content": inputmsg})
@@ -65,7 +87,13 @@ def main(argv):
     # 定義回應結果數據
     message_log.append({"role": "assistant", "content": response})
 
-    # CLI 請求結果
+    # 判斷是否需要保存對話流程
+    if save_flow:
+        # 將對話結果存入
+        with open(f'{filefolder}/{userhash}.json', 'w') as f:
+            print(json.dump(message_log), file=f, end='')
+
+    # CLI 輸出對話結果
     print(response)
 
 if __name__ == "__main__":
