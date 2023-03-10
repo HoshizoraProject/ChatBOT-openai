@@ -52,7 +52,7 @@ def main(argv):
         elif opt in ("-l", "--length"):
             length: int = arg
 
-    # 沒有使用者, 則產生隨機ID, 並且不保存對話流程
+    # 沒有流程, 則產生隨機ID, 並且不保存對話流程
     save_flow = True
     if flowhash == None:
         flowhash = str(uuid.uuid4())
