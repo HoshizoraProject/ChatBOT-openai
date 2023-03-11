@@ -58,9 +58,10 @@ def main(argv):
         flowuuid = str(uuid.uuid4())
         save_flow = False
 
-    # 設定 OpenAI KEY
+    # 設定 OpenAI 參數
     openai.api_key = cf.get("openai", "OPENAI_API_KEY")
     openai.organization = cf.get("openai", "OPENAI_ORGANIZATION_ID")
+    system_content = cf.get("openai", "OPENAI_SYSTEM_CONTENT")
 
     # 判斷是否需要保存對話流程
     if save_flow:
@@ -70,10 +71,10 @@ def main(argv):
                 message_log = json.load(f)
         else:
             # 建立新的對話流程
-            message_log = [{"role": "system", "content": "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible. Traditional Chinese is preferred for answers."}]
+            message_log = [{"role": "system", "content": system_content}]
     else:
         # 建立新的對話流程
-        message_log = [{"role": "system", "content": "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible. Traditional Chinese is preferred for answers."}]
+        message_log = [{"role": "system", "content": system_content}]
 
     # 定義文字輸入數據
     message_log.append({"role": "user", "content": inputmsg})

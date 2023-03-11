@@ -9,7 +9,7 @@ import subprocess
 input = "要詢問AI的文字"
 
 # 執行子程序
-proc = subprocess.run(['python3', 'chatbot.py', f'--message={input}'],
+proc = subprocess.run(['python3', 'chatbot.py', f'--message="{input}"'],
                           stdout=subprocess.PIPE)
 if (proc.returncode != 0):
     print("執行 chatbot.py 發生異常!")
