@@ -34,7 +34,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"hmf:l:",["message=","flow=","length="])
     except getopt.GetoptError:
-        print('chatbot.py -m <message> -f <flow> -l <length>')
+        print('chatbot.py -m <message> -f <flow>')
         sys.exit(2)
 
     # 定義預設值
@@ -43,14 +43,12 @@ def main(argv):
 
     for opt, arg in opts:
         if opt == '-h':
-            print('chatbot.py -m <message> -f <flow> -l <length>')
+            print('chatbot.py -m <message> -f <flow>')
             sys.exit(0)
         elif opt in ("-m", "--message"):
             inputmsg: str = arg
         elif opt in ("-f", "--flow"):
             flowuuid: str = arg
-        elif opt in ("-l", "--length"):
-            length: int = int(arg)
 
     # 沒有流程, 則產生隨機ID, 並且不保存對話流程
     save_flow = True
@@ -69,6 +67,15 @@ def main(argv):
         if os.path.isfile(f'{filefolder}/{flowuuid}.json'):
             with open(f'{filefolder}/{flowuuid}.json', 'w') as f:
                 message_log = json.load(f)
+
+                # 判斷對話流程是否過長
+                count_content = 0
+                for role, content in message_log:
+                    count_content += len(content)
+                
+                if count_content > 4080:
+                    message_log.pop(1)
+                    message_log.pop(1)
         else:
             # 建立新的對話流程
             message_log = [{"role": "system", "content": system_content}]
