@@ -3,3 +3,4 @@ OPENAI_API_KEY =
 OPENAI_ORGANIZATION_ID = 
 OPENAI_SYSTEM_CONTENT = "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible. Traditional Chinese is preferred for answers."
 OPENAI_KEEP_COUNT = 4
+OPENAI_FLOW_TTL = 7200
