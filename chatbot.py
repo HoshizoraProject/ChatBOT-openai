@@ -3,11 +3,10 @@ import configparser, uuid
 import openai
 
 # 定義 OpenAI GPT 請求
-def generate_response(messages, length):
+def generate_response(messages):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages,
-        max_tokens=length,
         stop=None,
         temperature=0.7
     )
@@ -39,7 +38,6 @@ def main(argv):
 
     # 定義預設值
     flowuuid = None # 預設流程ID
-    length = 200 # 預設回應長度
 
     for opt, arg in opts:
         if opt == '-h':
@@ -90,7 +88,7 @@ def main(argv):
     # 取得請求結果
     response = ""
     try:
-        response = generate_response(message_log, length)
+        response = generate_response(message_log)
     # 發生錯誤直接跳離程序
     except Exception:
         sys.exit(1)
