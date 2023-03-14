@@ -60,6 +60,7 @@ def main(argv):
     openai.api_key = cf.get("openai", "OPENAI_API_KEY")
     openai.organization = cf.get("openai", "OPENAI_ORGANIZATION_ID")
     system_content = cf.get("openai", "OPENAI_SYSTEM_CONTENT")
+    keep_count = int(cf.get("openai", "OPENAI_KEEP_COUNT"))
 
     # 判斷是否需要保存對話流程
     if save_flow:
@@ -99,6 +100,11 @@ def main(argv):
 
     # 判斷是否需要保存對話流程
     if save_flow:
+        # 拋棄過多的對話
+        if len(message_log) > (keep_count * 2 + 1):
+            message_log.pop(1)
+            message_log.pop(1)
+
         # 將對話結果存入
         with open(f'{filefolder}/{flowuuid}.json', 'w') as f:
             json.dump(message_log, f)
