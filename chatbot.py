@@ -10,6 +10,9 @@ def generate_response(messages):
         stop=None,
         temperature=0.7
     )
+    
+    # 使用 stderr 顯示回應內容
+    print(json.dumps(response), file=sys.stderr)
 
     for choice in response.choices:
         if "text" in choice:
@@ -90,7 +93,8 @@ def main(argv):
     try:
         response = generate_response(message_log)
     # 發生錯誤直接跳離程序
-    except Exception:
+    except Exception as ex:
+        print(ex, file=sys.stderr)
         sys.exit(1)
 
     # 定義回應結果數據
