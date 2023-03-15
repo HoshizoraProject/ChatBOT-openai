@@ -2,6 +2,9 @@
 透過 OpenGPT 進行類自然語言對話, 使用模型 `gpt-3.5-turbo`
 
 ## Python 使用上的基礎範例
+### 主要呼叫程序
+`chatbot.py` 
+
 ```
 import subprocess
 
@@ -20,8 +23,12 @@ response = proc.stdout.decode("utf-8")
 print(response)
 ```
 
-### 可選參數
+#### 可選參數
 `--flow=` 維持對話流程的識別ID, 推薦使用`UUID`或`HASH`
+
+### 檢查過期 flow 清單子程序
+`check_flow_ttl.py`
+
 
 ## Reference
 [OpenAI API GPT-3.5](https://platform.openai.com/docs/guides/chat)
