@@ -8,7 +8,10 @@ def generate_response(messages):
         model="gpt-3.5-turbo",
         messages=messages,
         stop=None,
-        temperature=0.7
+        temperature=0.7,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
     )
     
     # 使用 stderr 顯示回應內容
@@ -19,10 +22,27 @@ def generate_response(messages):
             return choice.text
     return response.choices[0].message.content
 
+# 判斷 問題是否違反原則
+def moderation_response(messages):
+    response = openai.Moderation.create(
+        input=messages
+    )
+
+    # 使用 stderr 顯示回應內容
+    print(json.dumps(response), file=sys.stderr)
+
+    return response.results[0].flagged
+
 def main(argv):
     # 從設定檔讀取資料
     cf = configparser.ConfigParser()
     cf.read("settings.config")
+
+    # 設定 OpenAI 參數
+    openai.api_key = cf.get("openai", "OPENAI_API_KEY")
+    openai.organization = cf.get("openai", "OPENAI_ORGANIZATION_ID")
+    system_content = cf.get("openai", "OPENAI_SYSTEM_CONTENT")
+    keep_count = int(cf.get("openai", "OPENAI_KEEP_COUNT"))
 
     # 嘗試建立相關儲存的目錄(預設在 chatbot_flow)
     filefolder = 'chatbot_flow'
@@ -42,6 +62,7 @@ def main(argv):
     # 定義預設值
     flowuuid = None # 預設流程ID
 
+    # 取得參數資料
     for opt, arg in opts:
         if opt == '-h':
             print('chatbot.py -m <message> -f <flow>')
@@ -51,17 +72,20 @@ def main(argv):
         elif opt in ("-f", "--flow"):
             flowuuid: str = arg
 
+    # 判斷提問是否違反原則
+    try:
+        if moderation_response(inputmsg):
+            sys.exit(-1)
+    # 發生錯誤直接跳離程序
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
     # 沒有流程, 則產生隨機ID, 並且不保存對話流程
     save_flow = True
     if flowuuid == None:
         flowuuid = str(uuid.uuid4())
         save_flow = False
-
-    # 設定 OpenAI 參數
-    openai.api_key = cf.get("openai", "OPENAI_API_KEY")
-    openai.organization = cf.get("openai", "OPENAI_ORGANIZATION_ID")
-    system_content = cf.get("openai", "OPENAI_SYSTEM_CONTENT")
-    keep_count = int(cf.get("openai", "OPENAI_KEEP_COUNT"))
 
     # 判斷是否需要保存對話流程
     if save_flow:
