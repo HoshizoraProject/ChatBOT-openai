@@ -5,7 +5,7 @@
 ### 主要呼叫程序
 `chatbot.py` 
 
-```
+```python
 import subprocess
 
 # 定義輸入內容
